@@ -2,6 +2,18 @@
 import socket
 
 
+def parse_headers(arr: list[str]) -> dict:
+    headers_dict = {}
+    for header in arr:
+        if header == '':
+            continue
+        key, value = header.split(':', 1)
+        key = key.strip()
+        value = value.strip()
+        headers_dict[key] = value
+    return headers_dict
+
+
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
@@ -18,9 +30,15 @@ def main():
         decoded_data = data.decode()
         arr = decoded_data.split('\r\n')
         print('Arr:', arr)
+
         start_line = arr[0]
         method, path, version = start_line.split()
+        headers = parse_headers(arr[1:])
+
+
+        print('Start line:', start_line)
         print('Path:', path)
+        print('Headers:', headers)
 
         # Send a response back to the client
         response = "HTTP/1.1 404 NOT FOUND\r\n\r\n"
@@ -29,10 +47,15 @@ def main():
             response = "HTTP/1.1 200 OK\r\n\r\n"
 
         elif path.startswith('/echo/'):
-            text = path[6:]
+            body = path[6:]
             status_line = "HTTP/1.1 200 OK\r\n"
-            headers = f"Content-Type: text/plain\r\nContent-Length: {len(text)}\r\n\n"
-            body = text
+            headers = f"Content-Type: text/plain\r\nContent-Length: {len(body)}\r\n\n"
+            response = status_line + headers + body
+
+        elif path == '/user-agent' and 'User-Agent' in headers:
+            body = headers['User-Agent']
+            status_line = "HTTP/1.1 200 OK\r\n"
+            headers = f"Content-Type: text/plain\r\nContent-Length: {len(body)}\r\n\n"
             response = status_line + headers + body
 
         connection.sendall(response.encode())
