@@ -14,10 +14,19 @@ def main():
         data = connection.recv(1024)
         print('Received:', data.decode())
 
-        # Process the received data (optional)
+        # Process the received data
+        decoded_data = data.decode()
+        arr = decoded_data.split('\r\n')
+        print('Arr:', arr)
+        start_line = arr[0]
+        method, path, version = start_line.split()
+        print('Path:', path)
 
         # Send a response back to the client
         response = "HTTP/1.1 200 OK\r\n\r\n"
+        if path == '/':
+            response = "HTTP/1.1 404 NOT FOUND\r\n\r\n"
+
         connection.sendall(response.encode())
 
     finally:
