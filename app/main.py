@@ -32,7 +32,7 @@ def main():
             text = path[6:]
             status_line = "HTTP/1.1 200 OK\r\n"
             headers = f"Content-Type: text/plain\r\nContent-Length: {len(text)}\r\n\n"
-            body = text + '\r\n\r\n'
+            body = text
             response = status_line + headers + body
 
         connection.sendall(response.encode())
