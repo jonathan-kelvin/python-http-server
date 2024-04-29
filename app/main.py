@@ -58,6 +58,7 @@ def main():
             headers = f"Content-Type: text/plain\r\nContent-Length: {len(body)}\r\n\n"
             response = status_line + headers + body
 
+        print('Response:', response)
         connection.sendall(response.encode())
 
     finally:
