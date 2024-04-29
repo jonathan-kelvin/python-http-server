@@ -24,8 +24,12 @@ def main():
 
         # Send a response back to the client
         response = "HTTP/1.1 404 NOT FOUND\r\n\r\n"
-        if path == '/':
-            response = "HTTP/1.1 200 OK\r\n\r\n"
+        if path.startswith('/echo/'):
+            text = path[6:]
+            status_line = "HTTP/1.1 200 OK\r\n"
+            headers = f"Content-Type: text/plain\r\nContent-Length: {len(text)}\r\n"
+            body = text + '\r\n'
+            response = status_line + headers + "\r\n" + body
 
         connection.sendall(response.encode())
 
