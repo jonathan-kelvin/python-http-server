@@ -23,9 +23,9 @@ def main():
         print('Path:', path)
 
         # Send a response back to the client
-        response = "HTTP/1.1 200 OK\r\n\r\n"
+        response = "HTTP/1.1 404 NOT FOUND\r\n\r\n"
         if path == '/':
-            response = "HTTP/1.1 404 NOT FOUND\r\n\r\n"
+            response = "HTTP/1.1 200 OK\r\n\r\n"
 
         connection.sendall(response.encode())
 
