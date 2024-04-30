@@ -16,11 +16,11 @@ def parse_headers(arr: list[str]) -> dict:
 
 def handle_connection(connection, client_address, i):
     try:
-        print(f"Client connected {i}")
-        print('Connection from:', client_address)
 
         # Receive data from the client
         data = connection.recv(1024)
+        print(f"Client connected {i}")
+        print('Connection from:', client_address)
         print('Received:', data.decode())
 
         # Process the received data
@@ -30,10 +30,6 @@ def handle_connection(connection, client_address, i):
         start_line = arr[0]
         method, path, version = start_line.split()
         headers = parse_headers(arr[1:])
-
-        print('Start line:', start_line)
-        print('Path:', path)
-        print('Headers:', headers)
 
         # Send a response back to the client
         response = "HTTP/1.1 404 NOT FOUND\r\n\r\n"
@@ -53,7 +49,7 @@ def handle_connection(connection, client_address, i):
             headers = f"Content-Type: text/plain\r\nContent-Length: {len(body)}\r\n\n"
             response = status_line + headers + body
 
-        print('Response {i}:', response)
+        print(f"Response {i}: {response}")
         connection.sendall(response.encode())
 
     finally:
