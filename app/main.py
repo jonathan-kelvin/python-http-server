@@ -26,8 +26,8 @@ def handle_connection(connection, client_address, i, directory):
     try:
         # Receive data from the client
         data = connection.recv(1024)
-        print(f'Connection {i}: {client_address}')
-        print('Received:', data.decode())
+        print(f'Connection ({i}): {client_address}')
+        print('Received:', data.decode().trim())
 
         # Process the received data
         decoded_data = data.decode()
@@ -65,7 +65,7 @@ def handle_connection(connection, client_address, i, directory):
             except FileNotFoundError:
                 pass
 
-        print(f"Response {i}: {response}")
+        print(f"Response ({i}): {response}")
         connection.sendall(response.encode())
 
     finally:
@@ -80,10 +80,8 @@ def main():
 
     print('Directory:', args.directory)
 
-
     print('Starting server...')
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
-    print('Server started')
 
     i = 0
     while True:
