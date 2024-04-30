@@ -22,7 +22,7 @@ def handle_read_file(directory, filename):
         contents = file.read()  # Read the entire contents of the file
         body = contents
         status_line = "HTTP/1.1 200 OK\r\n"
-        headers = f"Content-Type: application/octet-stream\r\nContent-Length: {len(body)}\r\n\n"
+        headers = f"Content-Type: application/octet-stream\r\nContent-Length: {len(body)}\r\n\r\n"
         return status_line + headers + body
 
 
@@ -59,13 +59,13 @@ def handle_connection(connection, client_address, i, directory):
         elif path.startswith('/echo/'):
             body = path[6:]
             status_line = "HTTP/1.1 200 OK\r\n"
-            headers = f"Content-Type: text/plain\r\nContent-Length: {len(body)}\r\n\n"
+            headers = f"Content-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n"
             response = status_line + headers + body
 
         elif path == '/user-agent' and 'User-Agent' in headers:
             body = headers['User-Agent']
             status_line = "HTTP/1.1 200 OK\r\n"
-            headers = f"Content-Type: text/plain\r\nContent-Length: {len(body)}\r\n\n"
+            headers = f"Content-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n"
             response = status_line + headers + body
 
         elif path.startswith('/files/'):
