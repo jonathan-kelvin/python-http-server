@@ -14,13 +14,25 @@ def parse_headers(arr: list[str]) -> dict:
         value = value.strip()
         headers_dict[key] = value
     return headers_dict
-
-
-def read_file_contents(file_path):
-    with open(file_path, 'r') as file:
-        contents = file.read()  # Read the entire contents of the file
-        return contents
     
+
+def handle_read_file(directory, filename):
+    filepath = os.path.join(directory, filename)
+    with open(filepath, 'r') as file:
+        contents = file.read()  # Read the entire contents of the file
+        body = contents
+        status_line = "HTTP/1.1 200 OK\r\n"
+        headers = f"Content-Type: application/octet-stream\r\nContent-Length: {len(body)}\r\n\n"
+        return status_line + headers + body
+
+
+def handle_post_file(directory, filename, content):
+    filepath = os.path.join(directory, filename)
+    with open(filepath, 'w') as file:
+        file.write(content)
+        status_line = "HTTP/1.1 201 Created\r\n\r\n"
+        return status_line
+
 
 def handle_connection(connection, client_address, i, directory):
     try:
@@ -31,11 +43,12 @@ def handle_connection(connection, client_address, i, directory):
 
         # Process the received data
         decoded_data = data.decode()
-        arr = decoded_data.split('\r\n')
+        metadata, request_body = decoded_data.split('\r\n\r\n', 1)
+        metadata = metadata.split('\r\n')
 
-        start_line = arr[0]
+        start_line = metadata[0]
         method, path, version = start_line.split()
-        headers = parse_headers(arr[1:])
+        headers = parse_headers(metadata[1:])
 
         # Send a response back to the client
         response = "HTTP/1.1 404 NOT FOUND\r\nContent-Length: 0\r\n\r\n"
@@ -58,10 +71,10 @@ def handle_connection(connection, client_address, i, directory):
         elif path.startswith('/files/'):
             filename = path[7:]
             try:
-                body = read_file_contents(os.path.join(directory, filename))
-                status_line = "HTTP/1.1 200 OK\r\n"
-                headers = f"Content-Type: application/octet-stream\r\nContent-Length: {len(body)}\r\n\n"
-                response = status_line + headers + body
+                if method == 'GET':
+                    response = handle_read_file(directory, filename)
+                elif method == 'POST':
+                    response = handle_post_file(directory, filename, request_body)
             except FileNotFoundError:
                 pass
 
