@@ -22,7 +22,7 @@ and more.
 ## Running locally
 Python 3.11.9 with pipenv installed:
 
-run ```./your_server.sh``` in one terminal session, and ```nc -vz 127.0.0.1 4221``` in another. (-v gives more verbose output, -z just scan for listening daemons, without sending any data to them.)
+run ```./your_server.sh``` in one terminal session
 
 
 ## Tasks
