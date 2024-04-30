@@ -63,7 +63,7 @@ def handle_connection(connection, client_address, i, directory):
                 headers = f"Content-Type: application/octet-stream\r\nContent-Length: {len(body)}\r\n\n"
                 response = status_line + headers + body
             except FileNotFoundError:
-                response = "HTTP/1.1 404 NOT FOUND\r\nContent-Length: {len(body)}\r\n\r\n"
+                response = "HTTP/1.1 404 NOT FOUND\r\nContent-Length: 0\r\n\r\n"
 
         print(f"Response {i}: {response}")
         connection.sendall(response.encode())
