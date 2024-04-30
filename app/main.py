@@ -26,7 +26,7 @@ def handle_connection(connection, client_address, i, directory):
     try:
         # Receive data from the client
         data = connection.recv(1024)
-        print('Connection {i}:', client_address)
+        print(f'Connection {i}: {client_address}')
         print('Received:', data.decode())
 
         # Process the received data
@@ -54,6 +54,7 @@ def handle_connection(connection, client_address, i, directory):
             status_line = "HTTP/1.1 200 OK\r\n"
             headers = f"Content-Type: text/plain\r\nContent-Length: {len(body)}\r\n\n"
             response = status_line + headers + body
+
         elif path.startswith('/files/'):
             filename = path[7:]
             try:
@@ -62,7 +63,7 @@ def handle_connection(connection, client_address, i, directory):
                 headers = f"Content-Type: application/octet-stream\r\nContent-Length: {len(body)}\r\n\n"
                 response = status_line + headers + body
             except FileNotFoundError:
-                pass
+                response = "HTTP/1.1 404 NOT FOUND\r\nContent-Length: {len(body)}\r\n\r\n"
 
         print(f"Response {i}: {response}")
         connection.sendall(response.encode())
@@ -74,7 +75,7 @@ def handle_connection(connection, client_address, i, directory):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--directory')
+    parser.add_argument('--directory', type=str, default=None)
     args = parser.parse_args()
 
     print('Directory:', args.directory)
