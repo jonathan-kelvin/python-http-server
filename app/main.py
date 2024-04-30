@@ -54,7 +54,7 @@ def handle_connection(connection, client_address, i, directory):
         response = "HTTP/1.1 404 NOT FOUND\r\nContent-Length: 0\r\n\r\n"
 
         if path == '/':
-            response = "HTTP/1.1 200 OK\r\n\r\n"
+            response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n"
 
         elif path.startswith('/echo/'):
             body = path[6:]
