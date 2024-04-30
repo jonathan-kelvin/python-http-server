@@ -1,5 +1,6 @@
 # Uncomment this to pass the first stage
 import socket
+import multiprocessing
 
 
 def parse_headers(arr: list[str]) -> dict:
@@ -14,11 +15,7 @@ def parse_headers(arr: list[str]) -> dict:
     return headers_dict
 
 
-def main():
-    # You can use print statements as follows for debugging, they'll be visible when running tests.
-    server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
-    connection, client_address = server_socket.accept() # wait for client
-
+def handle_connection(connection, client_address):
     try:
         print('Connection from', client_address)
 
@@ -64,6 +61,16 @@ def main():
     finally:
         # Clean up the connection
         connection.close()
+
+
+def main():
+    # You can use print statements as follows for debugging, they'll be visible when running tests.
+    server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
+
+    while True:
+        connection, client_address = server_socket.accept() # wait for client
+        process = multiprocessing.Process(target=handle_connection, args=(connection, client_address))
+        process.start()
 
 
 if __name__ == "__main__":
