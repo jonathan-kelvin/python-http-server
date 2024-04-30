@@ -22,7 +22,7 @@ and more.
 ## Running locally
 Python 3.11.9 with pipenv installed:
 
-run ```./your_server.sh``` in one terminal session
+run `./your_server.sh` in one terminal session
 
 
 ## Tasks
@@ -35,7 +35,7 @@ and uncomment the relevant code, and push your changes to pass the first stage:
 ```sh
 git add .
 git commit -m "pass 1st stage" # any msg
-git push origin master
+git push -u origin master
 ```
 
 Time to move on to the next stage!
@@ -45,5 +45,5 @@ Note: This section is for stages 2 and beyond.
 1. Ensure you have `python (3.11)` installed locally
 1. Run `./your_server.sh` to run your program, which is implemented in
    `app/main.py`.
-1. Commit your changes and run `git push origin master` to submit your solution
+1. Commit your changes and run `git push -u origin master` to submit your solution
    to CodeCrafters. Test output will be streamed to your terminal.
