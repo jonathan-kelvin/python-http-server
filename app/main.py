@@ -1,5 +1,6 @@
 import socket
 import multiprocessing
+import argparse
 
 
 def parse_headers(arr: list[str]) -> dict:
@@ -16,11 +17,9 @@ def parse_headers(arr: list[str]) -> dict:
 
 def handle_connection(connection, client_address, i):
     try:
-
         # Receive data from the client
         data = connection.recv(1024)
-        print(f"Client connected {i}")
-        print('Connection from:', client_address)
+        print('Connection {i}:', client_address)
         print('Received:', data.decode())
 
         # Process the received data
@@ -58,7 +57,12 @@ def handle_connection(connection, client_address, i):
 
 
 def main():
-    # You can use print statements as follows for debugging, they'll be visible when running tests.
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--directory')
+    args = parser.parse_args()
+    print(args.directory)
+
+
     print('Starting server...')
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
     print('Server started')
