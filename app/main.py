@@ -27,7 +27,7 @@ def handle_connection(connection, client_address, i, directory):
         # Receive data from the client
         data = connection.recv(1024)
         print(f'Connection ({i}): {client_address}')
-        print('Received:', data.decode().trim())
+        print('Received:', data.decode().strip())
 
         # Process the received data
         decoded_data = data.decode()
