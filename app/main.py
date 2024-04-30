@@ -1,6 +1,7 @@
 import socket
 import multiprocessing
 import argparse
+import os
 
 
 def parse_headers(arr: list[str]) -> dict:
@@ -15,7 +16,13 @@ def parse_headers(arr: list[str]) -> dict:
     return headers_dict
 
 
-def handle_connection(connection, client_address, i):
+def read_file_contents(file_path):
+    with open(file_path, 'r') as file:
+        contents = file.read()  # Read the entire contents of the file
+        return contents
+    
+
+def handle_connection(connection, client_address, i, directory):
     try:
         # Receive data from the client
         data = connection.recv(1024)
@@ -47,6 +54,15 @@ def handle_connection(connection, client_address, i):
             status_line = "HTTP/1.1 200 OK\r\n"
             headers = f"Content-Type: text/plain\r\nContent-Length: {len(body)}\r\n\n"
             response = status_line + headers + body
+        elif path.startswith('/files/'):
+            filename = path[7:]
+            try:
+                body = read_file_contents(os.path.join(directory, filename))
+                status_line = "HTTP/1.1 200 OK\r\n"
+                headers = f"Content-Type: application/octet-stream\r\nContent-Length: {len(body)}\r\n\n"
+                response = status_line + headers + body
+            except FileNotFoundError:
+                pass
 
         print(f"Response {i}: {response}")
         connection.sendall(response.encode())
@@ -60,7 +76,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--directory')
     args = parser.parse_args()
-    print(args.directory)
+
+    print('Directory:', args.directory)
 
 
     print('Starting server...')
@@ -68,11 +85,10 @@ def main():
     print('Server started')
 
     i = 0
-
     while True:
         connection, client_address = server_socket.accept() # wait for client
         i += 1
-        process = multiprocessing.Process(target=handle_connection, args=(connection, client_address, i))
+        process = multiprocessing.Process(target=handle_connection, args=(connection, client_address, i, args.directory))
         process.start()
 
 
